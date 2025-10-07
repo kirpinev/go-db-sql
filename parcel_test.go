@@ -71,7 +71,7 @@ func TestAddGetDelete(t *testing.T) {
 	require.NoError(t, err)
 
 	deletedParcel, err := store.Get(number)
-	require.Error(t, err)
+	require.ErrorIs(t, err, sql.ErrNoRows)
 	assert.Empty(t, deletedParcel)
 }
 

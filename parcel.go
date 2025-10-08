@@ -12,17 +12,6 @@ func NewParcelStore(db *sql.DB) ParcelStore {
 	return ParcelStore{db: db}
 }
 
-func ensureOneRowAffected(res sql.Result) error {
-	n, err := res.RowsAffected()
-	if err != nil {
-		return err
-	}
-	if n == 0 {
-		return sql.ErrNoRows
-	}
-	return nil
-}
-
 func (s ParcelStore) Add(p Parcel) (int, error) {
 	res, err := s.db.Exec("INSERT INTO parcel (client, status, address, created_at) VALUES (:client, :status, :address, :created_at)",
 		sql.Named("client", p.Client),
@@ -88,7 +77,16 @@ func (s ParcelStore) SetStatus(number int, status string) error {
 		return err
 	}
 
-	return ensureOneRowAffected(res)
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if n == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
 
 func (s ParcelStore) SetAddress(number int, address string) error {
@@ -99,7 +97,16 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 		return err
 	}
 
-	return ensureOneRowAffected(res)
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if n == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
 
 func (s ParcelStore) Delete(number int) error {
@@ -110,5 +117,14 @@ func (s ParcelStore) Delete(number int) error {
 		return err
 	}
 
-	return ensureOneRowAffected(res)
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if n == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
